@@ -1,0 +1,12 @@
+[project]
+name = "nmap-mcp-server" 
+version = "0.1.0"
+description = "nmap port scanner"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "mcp[cli]>=1.27.0",
+]
+
+[dependency-groups]
+dev = ["pytest>=9.0.3"]
