@@ -36,10 +36,10 @@ Some commonly used options include:
 
 It is recommended to refer to the following resources for more information and guidance on using Nmap effectively when performing network reconnaissance and port scanning:
 
-- https://www.stationx.net/nmap-cheat-sheet/
-- https://nmap.org/book/man.html
-- https://github.com/ekol-x9/nmap-cheatsheet
+- https://nmap.org/book/man-port-scanning-techniques.html
 - https://hackertarget.com/nmap-cheatsheet-a-quick-reference-guide/
+- https://github.com/ekol-x9/nmap-cheatsheet
+- https://nmap.org/book/man-host-discovery.html
 
 # Conclusion
 
