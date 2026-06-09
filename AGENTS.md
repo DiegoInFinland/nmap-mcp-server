@@ -104,7 +104,7 @@ ping_scan(target: "192.168.1.0/24")
 
 ```bash
 # Using the helper script
-./run_dev
+./run_dev.sh
 
 # Or directly
 docker run --rm -it -v $(pwd)/src:/src nmap-mcp-server
