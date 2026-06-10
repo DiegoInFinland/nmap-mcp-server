@@ -16,11 +16,10 @@ This command will perform a service version detection and OS fingerprinting scan
 ## Options
 
 It is important to note that all this options are optional and can be used in combination to customize your scan based on your specific needs.
-For better understanding of the available options and their usage, it is recommended to refer to the Nmap documentation in Useful documentation and resources or use the `nmap --help` command to explore the various scanning techniques and options that can be utilized with this skill.
+For better understanding of the available options and their usage, it is recommended to refer to the Nmap documentation. See below for useful links, or use the `nmap --help` command to explore the various scanning techniques and options that can be utilized with this skill.
 
 Some commonly used options include:
 
-- `-sV`: Enables service version detection.
 - `-O`: Enables OS detection.
 - `-p`: Specify ports to scan (e.g., `-p 80,443`).
 - `-A`: Enables aggressive scan options, including OS detection, version detection, script scanning, and traceroute.
@@ -31,9 +30,8 @@ Some commonly used options include:
 
 ### 1. Find more information and discover live hosts on a network:
 
-- find some useful information, for example, visit: https://nmap.org/book/man-port-scanning-techniques.html to understand the different scanning techniques and options available with Nmap.
-- Before performing a scan, it is recommended to find active hosts. This will help you to identify which devices are online and can be scanned further. Commonly options include:
-  - `-sn <target_network>`: This command performs a ping scan to discover live hosts on the specified network.
+- First it is wise to find some useful information, for example, visit: https://nmap.org/book/man-port-scanning-techniques.html to understand the different scanning techniques and options available with Nmap. This will help you to understand the appropriate scanning options based on your specific needs and the target system you are assessing.
+- Before performing a scan, it is recommended to find active hosts. This will help you to identify which devices are online and can be scanned further. Use `ping_scan` to perform a ping scan on a subnet or specific IP address to discover live hosts.
 
 ### 2. Scan for open ports and services using `nmap_scan`:
 

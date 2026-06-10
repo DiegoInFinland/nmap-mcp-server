@@ -12,8 +12,8 @@ AI Client (Claude, opencode, etc.)
     ▼
 Docker Container (kalilinux/kali-rolling)
     │
-    ├── uv         (Python package manager)
-    ├── server.py  (FastMCP server)
+    ├── uv             (Python package manager)
+    ├── src/server.py  (FastMCP server)
     │       ├── @mcp.tool()  →  nmap_scan(target, flags, ports)
     │       └── @mcp.tool()  →  ping_scan(target)
     └── nmap
@@ -30,11 +30,15 @@ Build the new image, then edit your AI configuration file in order to use it wit
 ### Build the Docker image
 
 ```bash
-# Build the image
-docker build --target base -t nmap-mcp-server .
+# Build the image (prod stage is default)
+docker build -t nmap-mcp-server .
 
-# Or run (stdio-based MCP server) for testing
-docker run --rm -it nmap-mcp-server
+# Run (stdio-based MCP server)
+docker run --rm -i nmap-mcp-server
+
+# Dev — run tests
+docker build --target dev -t nmap-mcp-server-dev .
+docker run --rm nmap-mcp-server-dev
 ```
 
 ### Configure your Agent
@@ -98,14 +102,13 @@ AI agents can chain these tools together in a single conversation:
 ./run_dev.sh
 ```
 
-The `src/` directory is volume-mounted so code changes take effect without rebuilding.
+The project root is volume-mounted so code changes take effect without rebuilding.
 
 Or run directly:
 
 ```bash
-cd src
 uv sync
-uv run server.py
+uv run src/server.py
 ```
 
 ## Security

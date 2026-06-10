@@ -1,7 +1,7 @@
-FROM kalilinux/kali-rolling AS base
+FROM kalilinux/kali-rolling AS python-deps
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
-# Clean up ENV: Remove redundant compile flags and set the path
+
 ENV UV_LINK_MODE=copy \
     PYTHONUNBUFFERED=1 \
     PYTHONWARNINGS=ignore \
@@ -11,13 +11,16 @@ RUN apt update && apt install -y \
     nmap \
     && rm -rf /var/lib/apt/lists/* && apt clean
 
-WORKDIR /src
-COPY ./src /src
-
+WORKDIR /app
+COPY pyproject.toml uv.lock /app/
+COPY src/ /app/src/
 RUN uv sync --compile-bytecode --no-dev
 
-ENTRYPOINT ["uv", "run", "-q", "server.py"]
-
-FROM base AS dev
+FROM python-deps AS dev
+COPY tests/ /app/tests/
 RUN uv sync --group dev
-ENTRYPOINT ["uv", "run", "pytest", "-v"]
+ENTRYPOINT ["uv", "run", "pytest", "-v", "tests/"]
+
+FROM python-deps AS prod
+ENTRYPOINT ["uv", "run", "-q", "src/server.py"] 
+

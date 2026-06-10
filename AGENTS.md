@@ -35,15 +35,15 @@ AI Client (Claude, etc.)
     ▼
 Docker Container (kalilinux/kali-rolling)
     │
-    ├── uv  (Python package manager)
-    ├── server.py  (FastMCP server)
+    ├── uv             (Python package manager)
+    ├── src/server.py  (FastMCP server)
     │       ├── @mcp.tool()  →  nmap_scan(target, flags, ports)
     │       └── @mcp.tool()  →  ping_scan(target)
     └── nmap
 ```
 
 - **Base image**: `kalilinux/kali-rolling`
-- **Runtime**: `uv run server.py` (entrypoint)
+- **Runtime**: `uv run src/server.py` (entrypoint)
 - **Transport**: MCP stdio
 
 ## Available Tool
@@ -103,14 +103,14 @@ ping_scan(target: "192.168.1.0/24")
 ## How to Run
 
 ```bash
-# Using the helper script
+# Using the helper script (hot-reload with source mount)
 ./run_dev.sh
 
-# Or directly
-docker run --rm -it -v $(pwd)/src:/src nmap-mcp-server
+# Or without hot-reload
+docker run --rm -i nmap-mcp-server
 ```
 
-The `src/` directory is volume-mounted so changes take effect without rebuilding.
+The project root is volume-mounted so changes take effect without rebuilding.
 
 ## Development
 
@@ -118,6 +118,13 @@ The `src/` directory is volume-mounted so changes take effect without rebuilding
 cd src
 uv sync          # install dependencies
 uv run server.py # start server directly (for testing)
+```
+
+Or from root:
+
+```bash
+uv sync
+uv run src/server.py
 ```
 
 Dependencies are managed with `uv` and declared in `pyproject.toml`:
