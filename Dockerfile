@@ -14,10 +14,8 @@ RUN apt update && apt install -y \
 WORKDIR /src
 COPY ./src /src
 
-# 1. Sync and compile everything NOW so nothing happens at runtime
 RUN uv sync --compile-bytecode --no-dev
 
-# 2. Use the virtualenv's python directly to avoid 'uv run' noise
 ENTRYPOINT ["uv", "run", "-q", "server.py"]
 
 FROM base AS dev
