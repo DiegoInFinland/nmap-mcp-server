@@ -3,6 +3,7 @@
 # Since the volume mount hides the image's .venv, we run uv sync at startup.
 # It should be used for development purposes only.
 docker run --rm -it \
+  --network host \
   -v $(pwd):/app \
   --entrypoint sh \
   nmap-mcp-server \

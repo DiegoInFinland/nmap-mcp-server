@@ -9,7 +9,7 @@
 Use these roles to define your behavior for specific tasks:
 
 - **Security Researcher**: Adopt this role for network audits and vulnerability discovery.
-- Path: [.agents/identities/security-researcher.md](./.agents/identities/security-researcher.md)
+- Path: [.opencode/agents/security-researcher.md](./.opencode/agents/security-researcher.md)
 
 ## Skills
 
@@ -107,7 +107,7 @@ ping_scan(target: "192.168.1.0/24")
 ./run_dev.sh
 
 # Or without hot-reload
-docker run --rm -i nmap-mcp-server
+docker run --rm --network host -i nmap-mcp-server
 ```
 
 The project root is volume-mounted so changes take effect without rebuilding.

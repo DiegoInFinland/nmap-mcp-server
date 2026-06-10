@@ -34,7 +34,7 @@ Build the new image, then edit your AI configuration file in order to use it wit
 docker build -t nmap-mcp-server .
 
 # Run (stdio-based MCP server)
-docker run --rm -i nmap-mcp-server
+docker run --rm --network host -i nmap-mcp-server
 
 # Dev — run tests
 docker build --target dev -t nmap-mcp-server-dev .
