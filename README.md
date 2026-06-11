@@ -115,12 +115,14 @@ uv run src/server.py
 
 - Nmap runs inside a disposable container — no persistent access to the host
 - Always verify you have authorization before scanning targets
+- File output flags are blocked via `DENY_FLAGS`
+- Port values are validated to be within 1-65535 and well-formed ranges
 - Default timeout: 5 minutes
 
 ## Known Limitations & TODOs
 
-- **Flag allowlist** — `flags` param currently accepts any Nmap flag. Should be restricted to a safe set (e.g., `-sV`, `-O`, `-A`, `-T4`, `-sC`, `-Pn`).
-- **Target validation** — No validation that target is a valid IP/hostname. `target: "-oN /tmp/x"` would execute unexpectedly.
+- **Flag denylist only** — File output flags are blocked, but there's no allowlist yet. Should be restricted to a safe set.
+- **Target validation** — No validation that target is a valid IP/hostname. Any string is passed directly to Nmap.
 - **`flags` and `ports` can conflict** — Passing `-p` in both can produce unexpected behavior since Nmap uses the last `-p` value.
 - **Timeout not configurable** — Hardcoded at 300s; should be a tool parameter.
 - **No GitHub Actions CI** — Tests exist but aren't run automatically.

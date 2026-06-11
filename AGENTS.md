@@ -68,11 +68,21 @@ Accepts typed parameters for target, flags, and ports, and assembles the Nmap co
 }
 ```
 
-On error/timeout:
+On timeout:
 
 ```json
 {
-  "error": "Nmap scan timed out"
+  "stdout": "",
+  "stderr": "Nmap scan timed out after 300 seconds",
+  "returncode": -1
+}
+```
+
+On unexpected error:
+
+```json
+{
+  "error": "Error executing Nmap: ..."
 }
 ```
 
@@ -115,16 +125,8 @@ The project root is volume-mounted so changes take effect without rebuilding.
 ## Development
 
 ```bash
-cd src
 uv sync          # install dependencies
-uv run server.py # start server directly (for testing)
-```
-
-Or from root:
-
-```bash
-uv sync
-uv run src/server.py
+uv run src/server.py # start server directly (for testing)
 ```
 
 Dependencies are managed with `uv` and declared in `pyproject.toml`:
@@ -135,7 +137,9 @@ Dependencies are managed with `uv` and declared in `pyproject.toml`:
 ## Security Considerations
 
 - Nmap runs inside a temporary container — no persistent access to the host
-- Input is split on whitespace and passed directly to Nmap — no sanitization beyond a basic empty-target check
+- Input is split on whitespace and passed directly to Nmap
+- File output flags (`-oN`, `-oX`, `-oG`, `-oS`, `-oA`, `--output-xml`) are blocked via `DENY_FLAGS`
+- Port values are validated to be within 1-65535 and well-formed ranges
 - The tool's `annotations` could be set to `destructiveHint=True` to warn clients that it performs network probes
 
 ## Suggested Improvements
