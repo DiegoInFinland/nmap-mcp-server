@@ -83,6 +83,20 @@ def ping_scan(target: str) -> Dict[str, Any]:
     return nmap_execute(["-sn", "-R", "--disable-arp-ping", "-PE", target])
 
 @mcp.tool()
+def ping6_scan(target: str) -> Dict[str, Any]:
+    """Performs a ping scan on the specified IPv6 target, returning the results as a JSON object.
+    Please, be aware that ipv6 networks are significantly larger than ipv4.
+    It is always preferable to specify a single target or a small range of addresses to avoid long scan times.
+    Avoid scanning large ipv6 subnets (e.g., /64 or larger) as it may lead to extremely long scan times and potential performance issues.
+
+    Args:
+        target (str): The IPv6 target to ping (e.g., IPv6 address or hostname).
+    Returns:
+        Dict[str, Any]: A dictionary containing the results of the ping scan.
+    """
+    return nmap_execute(["-6", "-sn", "-R", target])
+
+@mcp.tool()
 def nmap_scan(target: str, flags: str="", ports: str="") -> Dict[str, Any]:
     """Executes an Nmap scan on the specified target with optional flags and ports, returning the results as a JSON object.
 

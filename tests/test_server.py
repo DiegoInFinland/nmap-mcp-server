@@ -1,6 +1,6 @@
 from unittest.mock import patch, MagicMock
 import subprocess
-from server import nmap_execute, nmap_scan, ping_scan, CmdExec, validate_ports
+from server import nmap_execute, nmap_scan, ping_scan, ping6_scan, CmdExec, validate_ports
 
 
 def test_nmap_execute_returns_stdout_stderr_returncode():
@@ -99,6 +99,16 @@ def test_ping_scan():
         result = ping_scan(target="192.168.1.0/24")
 
         mock_exec.assert_called_once_with(["-sn", "-R", "--disable-arp-ping", "-PE", "192.168.1.0/24"])
+        assert result == {"stdout": "", "stderr": "", "returncode": 0}
+
+
+def test_ping6_scan():
+    with patch("server.nmap_execute") as mock_exec:
+        mock_exec.return_value = {"stdout": "", "stderr": "", "returncode": 0}
+
+        result = ping6_scan(target="2001:db8::1")
+
+        mock_exec.assert_called_once_with(["-6", "-sn", "-R", "2001:db8::1"])
         assert result == {"stdout": "", "stderr": "", "returncode": 0}
 
 

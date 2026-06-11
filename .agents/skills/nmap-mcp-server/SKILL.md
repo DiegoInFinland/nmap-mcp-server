@@ -31,7 +31,7 @@ Some commonly used options include:
 ### 1. Find more information and discover live hosts on a network:
 
 - First it is wise to find some useful information, for example, visit: https://nmap.org/book/man-port-scanning-techniques.html to understand the different scanning techniques and options available with Nmap. This will help you to understand the appropriate scanning options based on your specific needs and the target system you are assessing.
-- Before performing a scan, it is recommended to find active hosts. This will help you to identify which devices are online and can be scanned further. Use `ping_scan` to perform a ping scan on a subnet or specific IP address to discover live hosts.
+- Before performing a scan, it is recommended to find active hosts. This will help you to identify which devices are online and can be scanned further. Use `ping_scan` (IPv4) or `ping6_scan` (IPv6) to perform a ping scan on a subnet or specific IP address to discover live hosts.
 
 ### 2. Scan for open ports and services using `nmap_scan`:
 
