@@ -16,7 +16,7 @@ Use these roles to define your behavior for specific tasks:
 You have access to the following specialized capabilities:
 
 - **nmap-scan-skill**: Perform network scans and service enumeration.
-  - Documentation: [.agents/skills/nmap-mcp-server/SKILL.md](./.agents/skills/nmap-scan-skill/SKILL.md)
+  - Documentation: [.agents/skills/nmap-mcp-skill/SKILL.md](./.agents/skills/nmap-scan-skill/SKILL.md)
 
 ## Operational Boundaries
 
