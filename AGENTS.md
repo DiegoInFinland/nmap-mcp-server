@@ -78,7 +78,7 @@ On error/timeout:
 
 ### `ping_scan`
 
-Performs a ping scan (`nmap -sn`) on the specified target.
+Performs a ping scan (`nmap -sn -R --disable-arp-ping -PE`) on the specified target. Uses ICMP echo requests to avoid ARP ghosts (common in Docker/bridge networks).
 
 | Parameter | Type  | Default | Description                                 |
 | --------- | ----- | ------- | ------------------------------------------- |
@@ -140,6 +140,5 @@ Dependencies are managed with `uv` and declared in `pyproject.toml`:
 
 ## Suggested Improvements
 
-- Add port range validation
 - Improve error messages for common Nmap errors
 - Make timeout configurable as a tool parameter

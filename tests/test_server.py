@@ -40,7 +40,7 @@ def test_nmap_execute_timeout():
 
         result = nmap_execute(["scanme.nmap.org"])
 
-        assert result == {"error": "Nmap scan timed out"}
+        assert result == {"stdout": "", "stderr": "Nmap scan timed out after 300 seconds", "returncode": -1}
 
 
 def test_nmap_execute_unexpected_error():
@@ -98,7 +98,7 @@ def test_ping_scan():
 
         result = ping_scan(target="192.168.1.0/24")
 
-        mock_exec.assert_called_once_with(["-sn", "192.168.1.0/24"])
+        mock_exec.assert_called_once_with(["-sn", "-R", "--disable-arp-ping", "-PE", "192.168.1.0/24"])
         assert result == {"stdout": "", "stderr": "", "returncode": 0}
 
 
