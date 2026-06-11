@@ -7,15 +7,16 @@ Dockerized Kali Linux container that exposes Nmap scanning as a very small and l
 ## Architecture
 
 ```
-AI Client (Claude, opencode, etc.)
+AI Client (Claude, etc.)
     │  MCP protocol (stdio)
     ▼
 Docker Container (kalilinux/kali-rolling)
     │
     ├── uv             (Python package manager)
     ├── src/server.py  (FastMCP server)
-    │       ├── @mcp.tool()  →  nmap_scan(target, flags, ports)
-    │       └── @mcp.tool()  →  ping_scan(target)
+│       ├── @mcp.tool()  →  nmap_scan(target, flags, ports)
+│       ├── @mcp.tool()  →  ping_scan(target)
+│       └── @mcp.tool()  →  ping6_scan(target)
     └── nmap
 ```
 
@@ -110,24 +111,6 @@ Or run directly:
 uv sync
 uv run src/server.py
 ```
-
-## Security
-
-- Nmap runs inside a disposable container — no persistent access to the host
-- Always verify you have authorization before scanning targets
-- File output flags are blocked via `DENY_FLAGS`
-- Port values are validated to be within 1-65535 and well-formed ranges
-- Default timeout: 5 minutes
-
-## Known Limitations & TODOs
-
-- **Flag denylist only** — File output flags are blocked, but there's no allowlist yet. Should be restricted to a safe set.
-- **Target validation** — No validation that target is a valid IP/hostname. Any string is passed directly to Nmap.
-- **`flags` and `ports` can conflict** — Passing `-p` in both can produce unexpected behavior since Nmap uses the last `-p` value.
-- **Timeout not configurable** — Hardcoded at 300s; should be a tool parameter.
-- **No GitHub Actions CI** — Tests exist but aren't run automatically.
-- **`CmdExec` class** — Could be replaced with a simpler `subprocess.run()` call. However, as this project could grow in the future. It's worth to keep the code.
-- **Docker `--init` flag** — Not used; child processes may not be properly reaped.
 
 ## Dependencies
 
