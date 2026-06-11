@@ -51,7 +51,7 @@ Add to your MCP client config (e.g., `claude_desktop_config.json` or `opencode.j
   "mcpServers": {
     "nmap-mcp-server": {
       "command": "docker",
-      "args": ["run", "--rm", "-i", "nmap-mcp-server"]
+      "args": ["run", "--rm", "--network", "host", "-i", "nmap-mcp-server"]
     }
   }
 }
