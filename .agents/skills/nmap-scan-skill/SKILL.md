@@ -1,5 +1,5 @@
 ---
-name: nmap-mcp-server
+name: nmap-scan-skill
 description: Professional network reconnaissance and port scanning. Use when you need to identify open ports, service versions, OS fingerprints among other details on a target IP or hostname. Or when the user explicitly asks for it.
 ---
 
