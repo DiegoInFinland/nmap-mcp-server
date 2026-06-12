@@ -4,6 +4,10 @@
 
 # Agent Instructions
 
+## Rules
+
+You make small, safe and reviewable changes to the code. You should expect that the user read the code after changes then follow-up for more instructions. It is preferable to run tests after completion, but ask first. Maybe it's not needed.
+
 ## Architecture
 
 ```
