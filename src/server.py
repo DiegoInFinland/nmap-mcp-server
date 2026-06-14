@@ -72,6 +72,18 @@ def validate_ports(ports: str) -> bool:
         return False
 
 @mcp.tool()
+def local_ip() -> Dict[str, Any]:
+    """Checks local IP in the container using nmap --iflist. 
+    Returning the results as a JSON object of the current network interfaces and routing table. 
+    Ultimately showing the local IP addresses and network configuration.
+    
+    Returns:
+        Dict[str, Any]: A dictionary containing the results of the local IP check.
+
+    """ 
+    return nmap_execute(["--iflist"])
+
+@mcp.tool()
 def ping_scan(target: str) -> Dict[str, Any]:
     """Performs a ping scan on the specified target, returning the results as a JSON object.
 
