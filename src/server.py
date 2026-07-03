@@ -73,7 +73,7 @@ def validate_ports(ports: str) -> bool:
 
 @mcp.tool()
 def local_ip() -> Dict[str, Any]:
-    """Checks local IP in the container using nmap --iflist. 
+    """Checks local IP in the current container.  
     Returning the results as a JSON object of the current network interfaces and routing table. 
     Ultimately showing the local IP addresses and network configuration.
     

@@ -25,7 +25,7 @@ description: Professional network reconnaissance and port scanning. Use when the
 - Only scan targets explicitly selected by the user in Phase 1.
 - **Tool:** Use `nmap_scan`.
 - **Default Flags:** `-sS -sV -T3 --open`.
-- **Aggressive Flags:** If you intend to use `-A`, `-T4`, or `--script vuln`, you must explain the risk (noise/instability) and wait for a second "Yes" from the user.
+- **Aggressive Flags:** If you intend to use `-A`, `-T4`, or `--script vuln`
 
 # Operational Guardrails
 

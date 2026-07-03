@@ -2,7 +2,6 @@ from unittest.mock import patch, MagicMock
 import subprocess
 from server import nmap_execute, nmap_scan, ping_scan, ping6_scan, CmdExec, validate_ports
 
-
 def test_nmap_execute_returns_stdout_stderr_returncode():
     with patch("server.subprocess.Popen") as mock_popen:
         proc = MagicMock()
