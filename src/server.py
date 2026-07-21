@@ -4,8 +4,9 @@ import subprocess
 import sys 
 from typing import Dict, Any, List 
 
+logging.basicConfig(level=logging.WARNING, stream=sys.stderr)
+logging.getLogger("mcp").setLevel(logging.WARNING)
 mcp = FastMCP('nmap-scanner')
-logging.basicConfig(level=logging.WARNING, stream=sys.stderr) 
 TIMEOUT = 300
 
 # Deny list of file output flags (not needed since results are returned as JSON)
@@ -38,22 +39,20 @@ class CmdExec:
                         self.process.kill()
             return {
                 "stdout": "",
-                "stderr": f"Nmap scan timed out after {self.timeout} seconds",
+                "stderr": f"Error: timed out after {self.timeout} seconds",
                 "returncode": -1
             }
 
 def nmap_execute(args: List[str]) -> Dict[str, Any]:
     nmap_cmd = ["nmap"] + args
     if not args or args[-1].strip() == "":
-        return {"error": "No target specified for Nmap scan"}
-    
+        return {"error": "No target specified for Nmap scan"} 
     try:
         cmd_exec = CmdExec(nmap_cmd)
         return cmd_exec.execute()
     except Exception as e:
         return {"error": f"Error executing Nmap: {e}"}
     
-     
 def validate_ports(ports: str) -> bool:
     if not ports:
         return True
@@ -70,6 +69,14 @@ def validate_ports(ports: str) -> bool:
         return True
     except ValueError:
         return False
+
+def curl_execute(args: List[str]) -> Dict[str, Any]:
+    curl_cmd = ["curl"] + args 
+    try:
+        cmd_exec = CmdExec(curl_cmd)
+        return cmd_exec.execute()
+    except Exception as e:
+        return {"error": f"Error executing curl: {e}"}
 
 @mcp.tool()
 def local_ip() -> Dict[str, Any]:
@@ -133,8 +140,19 @@ def nmap_scan(target: str, flags: str="", ports: str="") -> Dict[str, Any]:
             return {"error": "Invalid ports specified"}
         args.extend(["-p", ports])
     args.append(target)
-
     return nmap_execute(args) 
+
+@mcp.tool()
+def curl_request(flags: List[str], url: str) -> Dict[str, Any]:
+    """Executes a curl request to the specified URL, returning the results as a JSON object.
+
+    Args:
+        flags (List[str]): Additional curl flags to include in the request.
+        url (str): The URL to send the curl request to.
+    Returns:
+        Dict[str, Any]: A dictionary containing the results of the curl request.
+    """
+    return curl_execute(flags + [url])
 
 if __name__ == "__main__": 
     mcp.run(transport="stdio")  

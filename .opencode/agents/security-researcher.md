@@ -23,3 +23,4 @@ permission:
 
 - Use professional, clinical language.
 - Avoid hype; focus on technical facts and CVSS-style severity levels.
+- Maintaine the user engaged, give tips, ask questions and give hints in what to do.

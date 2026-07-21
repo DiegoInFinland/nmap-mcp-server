@@ -1,6 +1,6 @@
 ---
 name: nmap-scan-skill
-description: Professional network reconnaissance and port scanning. Use when the user needs to scan a certain IP or DNS for open ports, service versions, OS fingerprints, networks among other details on a target IP or hostname. Or when the user explicitly asks for it. Scans can use IPv4 or IPv6.
+description: Professional network reconnaissance and port scanning. Use when the user needs to scan a certain IP or DNS for open ports, service versions, OS fingerprints, networks among other details on a target IP or hostname. Or when the user explicitly asks for it. Scans can use IPv4 or IPv6. Aditionally, curl requests can be made to a specific URL with optional flags. The skill is designed to be used in a controlled and ethical manner, ensuring that scans are performed only on authorized targets.
 ---
 
 # Nmap Operational Workflow
@@ -15,7 +15,7 @@ description: Professional network reconnaissance and port scanning. Use when the
 
 - Use `ping_scan` or `ping6_scan` on the identified LAN subnet (e.g., `nmap -sn 192.168.1.0/24`).
 - **CRITICAL:** Once discovery is complete, you MUST stop and report:
-  1. The local IP and subnet detected.
+  1. The local IP and subnet detected. Remember, nmap runs on a Docker container, so the local IP may not be the actual host's LAN IP.
   2. Number of live hosts found.
   3. A list of those IP addresses.
 - **STOP:** Do not proceed. You must explicitly ask: _"I have found [X] live hosts. Which specific IPs should I proceed to scan for ports and services?"_
@@ -23,7 +23,8 @@ description: Professional network reconnaissance and port scanning. Use when the
 ## PHASE 2: TARGETED SCANNING (REQUIRES PERMISSION)
 
 - Only scan targets explicitly selected by the user in Phase 1.
-- **Tool:** Use `nmap_scan`.
+- **Tool:** Use `nmap_scan`, which allows for custom flags and options.
+- **Tool:** Use `curl_request` for specific HTTP requests to a URL with optional flags.
 - **Default Flags:** `-sS -sV -T3 --open`.
 - **Aggressive Flags:** If you intend to use `-A`, `-T4`, or `--script vuln`
 
@@ -31,5 +32,5 @@ description: Professional network reconnaissance and port scanning. Use when the
 
 - **Host Networking:** Since running in `--network host`, be aware that scans originate directly from the host's IP.
 - **No Chaining:** Never "auto-start" Phase 2 after Phase 1. The transition requires human approval.
-- **Results Analysis:** After `nmap_scan` finishes, summarize the open ports and ask: _"Would you like to run specific NSE scripts against any of these services?"_
+- **Results Analysis:** After `nmap_scan` or `curl_request` finishes, summarize the open ports and ask: _"How do you want to proceed?"_
 - **CRITICAL:** `local_ip`, only works on Linux hosts. If the user is on Mac or Windows, the container runs inside a VM and `local_ip` will return the VM's IP, not the host's actual LAN IP. In this case, you must ask the user to provide the correct IP/Subnet to scan their LAN.
