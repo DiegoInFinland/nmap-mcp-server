@@ -1,57 +1,31 @@
 # Nmap MCP Server
 
-**Dockerized Kali Linux container exposing Nmap scanning as an MCP (Model Context Protocol) tool for AI agents.**
+## What This Is
 
-# Agent Instructions
+- Single Python MCP stdio server in `src/server.py`; it registers `FastMCP('nmap-scanner')` tools for `local_ip`, `ping_scan`, `ping6_scan`, `nmap_scan`, and `curl_request`.
+- Runtime image is Kali Linux (`kalilinux/kali-rolling`) with `nmap`, `curl`, and `uv`; production entrypoint is `uv run -q src/server.py`.
 
-## Rules
+## Commands
 
-You make small, safe and reviewable changes to the code. You should expect that the user read the code after changes then follow-up for more instructions. It is preferable to run tests after completion, but ask first. Maybe it's not needed.
+- Install local dependencies: `uv sync`.
+- Run server directly: `uv run src/server.py`.
+- Build prod image: `docker build -t nmap-mcp-server .`.
+- Run prod MCP server: `docker run --rm --network host -i nmap-mcp-server`.
+- Run dev server with source mounted: `./run_dev.sh`; it runs `uv sync --no-dev` inside the container because the bind mount hides the image `.venv`.
+- Run full tests locally: `uv run pytest -v tests/`.
+- Run one test file or test: `uv run pytest -v tests/test_server.py` or `uv run pytest -v tests/test_server.py::test_name`.
+- Run tests in Docker: `docker build --target dev -t nmap-mcp-server-dev .` then `docker run --rm nmap-mcp-server-dev`.
 
-## Architecture
+## Code Constraints
 
-```
-AI Client (Claude, etc.)
-    │  MCP protocol (stdio)
-    ▼
-Docker Container (kalilinux/kali-rolling)
-    │
-    ├── uv             (Python package manager)
-    ├── src/server.py  (FastMCP server)
-│       ├── @mcp.tool()  →  nmap_scan(target, flags, ports)
-│       ├── @mcp.tool()  →  ping_scan(target)
-│       └── @mcp.tool()  →  ping6_scan(target)
-    └── nmap
-```
+- Dependencies are only in `pyproject.toml`; keep `uv.lock` in sync after dependency changes.
+- Tests import `server` via `tests/conftest.py`, which prepends `src/` to `sys.path`; do not convert imports blindly without updating tests.
+- Command execution must stay list-based with `shell=False`; user-provided Nmap flags are currently whitespace-split before execution.
+- Preserve scan safety checks in `nmap_scan`: `DENY_FLAGS` blocks file output flags and `validate_ports` allows only ports/ranges within `1-65535`.
+- `ping_scan` intentionally uses `-sn -R --disable-arp-ping -PE`; `ping6_scan` intentionally uses `-6 -sn -R`.
 
-- **Base image**: `kalilinux/kali-rolling`
-- **Runtime**: `uv run src/server.py` (entrypoint)
-- **Transport**: MCP stdio
+## Operational Gotchas
 
-## How to Run
-
-```bash
-# Using the helper script (hot-reload with source mount)
-./run_dev.sh
-
-# Or without hot-reload
-docker run --rm --network host -i nmap-mcp-server
-```
-
-## Development
-
-```bash
-uv sync          # install dependencies
-uv run src/server.py # start server directly (for testing)
-```
-
-Dependencies are managed with `uv` and declared in `pyproject.toml`:
-
-## Security Considerations
-
-- Nmap runs inside a temporary container — no persistent access to the host
-- Input is split on whitespace and passed directly to Nmap
-- File output flags (`-oN`, `-oX`, `-oG`, `-oS`, `-oA`, `--output-xml`) are blocked via `DENY_FLAGS`
-- Port values are validated to be within 1-65535 and well-formed ranges
-- The tool's `annotations` could be set to `destructiveHint=True` to warn clients that it performs network probes
-- If unsure, stop and ask.
+- The MCP transport is stdio; logs go to stderr and should stay quiet enough not to corrupt protocol output.
+- Docker examples use `--network host`; on macOS/Windows this can still reflect Docker VM networking, not the host LAN. Ask for an explicit authorized target/subnet before broad scans.
+- Repo-local scan guidance lives in `.agents/skills/nmap-scan-skill/SKILL.md`; it requires pausing after discovery before targeted port/service scans.
