@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "nmap-mcp-server": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "--network",
+        "host",
+        "-i",
+        "nmap-mcp-server"
+      ]
+    }
+  }
+}

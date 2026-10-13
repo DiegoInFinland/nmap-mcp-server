@@ -78,6 +78,16 @@ def curl_execute(args: List[str]) -> Dict[str, Any]:
     except Exception as e:
         return {"error": f"Error executing curl: {e}"}
 
+def whatweb_execute(args: List[str]) -> Dict[str, Any]:
+    whatweb_cmd = ["whatweb"] + args
+    if not args or args[-1].strip() == "":
+        return {"error": "No target specified for WhatWeb scan"}
+    try:
+        cmd_exec = CmdExec(whatweb_cmd)
+        return cmd_exec.execute()
+    except Exception as e:
+        return {"error": f"Error executing WhatWeb: {e}"}
+
 @mcp.tool()
 def local_ip() -> Dict[str, Any]:
     """Checks local IP in the current container.  
@@ -91,15 +101,20 @@ def local_ip() -> Dict[str, Any]:
     return nmap_execute(["--iflist"])
 
 @mcp.tool()
-def ping_scan(target: str) -> Dict[str, Any]:
-    """Performs a ping scan on the specified target, returning the results as a JSON object.
+def ping_scan(target: str, disable_arp_ping: bool = False) -> Dict[str, Any]:
+    """Performs a ping scan on the specified target, returning the results as a JSON object. 
 
     Args:
         target (str): The target to ping (e.g., IP address or hostname).
+        disable_arp_ping (bool): Disable ARP ping for containerized Mac environments. Defaults to False.
     Returns:
         Dict[str, Any]: A dictionary containing the results of the ping scan.
     """
-    return nmap_execute(["-sn", "-R", "--disable-arp-ping", "-PE", target])
+    args = ["-sn"]
+    if disable_arp_ping:
+        args.append("--disable-arp-ping")
+    args.extend(["-R", "-PE", target])
+    return nmap_execute(args)
 
 @mcp.tool()
 def ping6_scan(target: str) -> Dict[str, Any]:
@@ -154,9 +169,20 @@ def curl_request(flags: List[str], url: str) -> Dict[str, Any]:
     """
     return curl_execute(flags + [url])
 
+@mcp.tool()
+def whatweb_scan(flags: List[str], url: str) -> Dict[str, Any]:
+    """Executes WhatWeb against the specified URL, returning the results as a JSON object.
+
+    Args:
+        flags (List[str]): Additional WhatWeb flags to include in the request.
+        url (str): The URL or target to fingerprint.
+    Returns:
+        Dict[str, Any]: A dictionary containing the results of the WhatWeb scan.
+    """
+    return whatweb_execute(flags + [url])
+
 if __name__ == "__main__": 
     mcp.run(transport="stdio")  
 
     
-
 

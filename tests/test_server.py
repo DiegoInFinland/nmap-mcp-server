@@ -1,6 +1,6 @@
 from unittest.mock import patch, MagicMock
 import subprocess
-from server import nmap_execute, nmap_scan, ping_scan, ping6_scan, CmdExec, validate_ports
+from server import nmap_execute, nmap_scan, ping_scan, ping6_scan, CmdExec, validate_ports, whatweb_execute, whatweb_scan
 
 def test_nmap_execute_returns_stdout_stderr_returncode():
     with patch("server.subprocess.Popen") as mock_popen:
@@ -39,7 +39,7 @@ def test_nmap_execute_timeout():
 
         result = nmap_execute(["scanme.nmap.org"])
 
-        assert result == {"stdout": "", "stderr": "Nmap scan timed out after 300 seconds", "returncode": -1}
+        assert result == {"stdout": "", "stderr": "Error: timed out after 300 seconds", "returncode": -1}
 
 
 def test_nmap_execute_unexpected_error():
@@ -49,6 +49,40 @@ def test_nmap_execute_unexpected_error():
         result = nmap_execute(["scanme.nmap.org"])
 
         assert result == {"error": "Error executing Nmap: nmap not found"}
+
+
+def test_whatweb_execute_returns_stdout_stderr_returncode():
+    with patch("server.subprocess.Popen") as mock_popen:
+        proc = MagicMock()
+        proc.communicate.return_value = ("whatweb output", "")
+        proc.returncode = 0
+        mock_popen.return_value = proc
+
+        result = whatweb_execute(["https://example.com"])
+
+        assert result == {"stdout": "whatweb output", "stderr": "", "returncode": 0}
+        mock_popen.assert_called_once_with(
+            ["whatweb", "https://example.com"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            shell=False,
+            text=True,
+        )
+
+
+def test_whatweb_execute_empty_target():
+    result = whatweb_execute([""])
+    assert result == {"error": "No target specified for WhatWeb scan"}
+
+
+def test_whatweb_scan_with_flags():
+    with patch("server.whatweb_execute") as mock_exec:
+        mock_exec.return_value = {"stdout": "", "stderr": "", "returncode": 0}
+
+        result = whatweb_scan(flags=["--no-errors"], url="https://example.com")
+
+        mock_exec.assert_called_once_with(["--no-errors", "https://example.com"])
+        assert result == {"stdout": "", "stderr": "", "returncode": 0}
 
 
 def test_nmap_scan_bare_target():
@@ -96,8 +130,17 @@ def test_ping_scan():
         mock_exec.return_value = {"stdout": "", "stderr": "", "returncode": 0}
 
         result = ping_scan(target="192.168.1.0/24")
+        mock_exec.assert_called_once_with(["-sn", "-R", "-PE", "192.168.1.0/24"])
+        assert result == {"stdout": "", "stderr": "", "returncode": 0}
 
-        mock_exec.assert_called_once_with(["-sn", "-R", "--disable-arp-ping", "-PE", "192.168.1.0/24"])
+
+def test_ping_scan_with_disable_arp_ping():
+    with patch("server.nmap_execute") as mock_exec:
+        mock_exec.return_value = {"stdout": "", "stderr": "", "returncode": 0}
+
+        result = ping_scan(target="192.168.1.0/24", disable_arp_ping=True)
+
+        mock_exec.assert_called_once_with(["-sn", "--disable-arp-ping", "-R", "-PE", "192.168.1.0/24"])
         assert result == {"stdout": "", "stderr": "", "returncode": 0}
 
 

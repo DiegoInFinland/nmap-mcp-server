@@ -2,8 +2,8 @@
 
 ## What This Is
 
-- Single Python MCP stdio server in `src/server.py`; it registers `FastMCP('nmap-scanner')` tools for `local_ip`, `ping_scan`, `ping6_scan`, `nmap_scan`, and `curl_request`.
-- Runtime image is Kali Linux (`kalilinux/kali-rolling`) with `nmap`, `curl`, and `uv`; production entrypoint is `uv run -q src/server.py`.
+- Single Python MCP stdio server in `src/server.py`; it registers `FastMCP('nmap-scanner')` tools for `local_ip`, `ping_scan`, `ping6_scan`, `nmap_scan`, `curl_request`, and `whatweb_scan`.
+- Runtime image is Kali Linux (`kalilinux/kali-rolling`) with `nmap`, `curl`, `whatweb`, and `uv`; production entrypoint is `uv run -q src/server.py`.
 
 ## Commands
 
@@ -20,9 +20,9 @@
 
 - Dependencies are only in `pyproject.toml`; keep `uv.lock` in sync after dependency changes.
 - Tests import `server` via `tests/conftest.py`, which prepends `src/` to `sys.path`; do not convert imports blindly without updating tests.
-- Command execution must stay list-based with `shell=False`; user-provided Nmap flags are currently whitespace-split before execution.
+- Command execution must stay list-based with `shell=False`; user-provided Nmap flags are currently whitespace-split before execution, while curl and WhatWeb flags are list inputs.
 - Preserve scan safety checks in `nmap_scan`: `DENY_FLAGS` blocks file output flags and `validate_ports` allows only ports/ranges within `1-65535`.
-- `ping_scan` intentionally uses `-sn -R --disable-arp-ping -PE`; `ping6_scan` intentionally uses `-6 -sn -R`.
+- `ping_scan` intentionally uses `-sn -R -PE`; `ping6_scan` intentionally uses `-6 -sn -R`.
 
 ## Operational Gotchas
 
